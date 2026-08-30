@@ -45,7 +45,7 @@ export default function OpticianRegistrationPage() {
       const formData = new FormData(form);
 
       /* =====================================================
-         UPLOAD DOCUMENTS
+         OPTIONAL DOCUMENT UPLOADS
       ===================================================== */
 
       const documents: {
@@ -72,6 +72,13 @@ export default function OpticianRegistrationPage() {
           documentType: "Profile Photo",
         },
       ];
+
+      /*
+        Documents are OPTIONAL.
+
+        If the user does not select a document,
+        nothing is uploaded and registration continues.
+      */
 
       for (const item of fileFields) {
         const file = formData.get(item.field);
@@ -229,9 +236,14 @@ export default function OpticianRegistrationPage() {
             </p>
 
             <p className="mt-3 leading-7 text-slate-600">
-              Our team will verify your information and documents.
-              Once the verification is completed, you will receive
-              an approval notification.
+              Our team will verify your information.
+              If documents were submitted, they will also be
+              reviewed during verification.
+            </p>
+
+            <p className="mt-3 leading-7 text-slate-600">
+              If you did not upload documents, our team may
+              request them later if required.
             </p>
 
             <p className="mt-6 font-bold text-[#3426a8]">
@@ -562,14 +574,14 @@ export default function OpticianRegistrationPage() {
           <SectionHeading
             number="06"
             title="Document Upload"
-            description="Upload clear and readable documents."
+            description="Documents are optional. You can upload them now or provide them later if requested."
           />
 
           <div className="grid gap-5 md:grid-cols-2">
+
             <FileInput
               name="qualificationCertificate"
               label="Upload Qualification Certificate"
-              required
               accept=".pdf,.jpg,.jpeg,.png"
             />
 
@@ -590,6 +602,19 @@ export default function OpticianRegistrationPage() {
               label="Upload Profile Photo"
               accept=".jpg,.jpeg,.png"
             />
+
+          </div>
+
+          <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+            <p className="text-sm font-semibold text-blue-800">
+              Documents are optional.
+            </p>
+
+            <p className="mt-1 text-sm leading-6 text-blue-700">
+              You can submit your registration without uploading
+              any documents. Our team may request the required
+              documents later during verification.
+            </p>
           </div>
 
           <p className="mt-4 text-xs text-slate-500">
@@ -677,8 +702,8 @@ export default function OpticianRegistrationPage() {
           </h2>
 
           <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-600">
-            Submit your registration and our team will review your
-            information and documents.
+            Submit your registration. Documents are optional
+            and can be provided later if required.
           </p>
 
           <button
@@ -687,14 +712,14 @@ export default function OpticianRegistrationPage() {
             className="mt-6 rounded-xl bg-[#3426a8] px-10 py-4 text-base font-black text-white shadow-lg transition hover:bg-[#291d91] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting
-              ? "Uploading & Submitting..."
+              ? "Submitting..."
               : "Submit Registration →"}
           </button>
 
           {submitting && (
             <p className="mt-3 text-xs font-semibold text-slate-500">
-              Please keep this page open while your documents
-              upload.
+              Please keep this page open while your registration
+              is being submitted.
             </p>
           )}
         </div>
@@ -895,7 +920,7 @@ function CheckboxGrid({
 }
 
 /* =========================================================
-   FILE INPUT
+   OPTIONAL FILE INPUT
 ========================================================= */
 
 function FileInput({
@@ -922,7 +947,7 @@ function FileInput({
       <input
         name={name}
         type="file"
-        required={required}
+        required={false}
         accept={accept}
         className="block w-full cursor-pointer rounded-xl border border-slate-200 bg-white text-sm text-slate-600 file:mr-4 file:border-0 file:bg-[#f0efff] file:px-4 file:py-3 file:font-bold file:text-[#3426a8] hover:file:bg-[#e7e5ff]"
       />
