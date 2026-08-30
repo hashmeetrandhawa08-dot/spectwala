@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import crypto from "crypto";
+import cloudinary from "../../lib/cloudinary";
 
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-
     const file = formData.get("file");
 
     if (!(file instanceof File)) {
@@ -29,7 +27,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Maximum file size: 10 MB
+    // Maximum 10 MB
     const maxSize = 10 * 1024 * 1024;
 
     if (file.size > maxSize) {
@@ -59,43 +57,37 @@ export async function POST(request: Request) {
       );
     }
 
-    const extension = path.extname(file.name).toLowerCase();
-
-    const safeFileName =
-      `${Date.now()}-${crypto.randomUUID()}${extension}`;
-
-    const uploadDirectory = path.join(
-      process.cwd(),
-      "public",
-      "uploads",
-      "registrations"
-    );
-
-    await mkdir(uploadDirectory, {
-      recursive: true,
-    });
-
-    const filePath = path.join(
-      uploadDirectory,
-      safeFileName
-    );
-
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    await writeFile(filePath, buffer);
+    const publicId = `spectwala/registrations/${Date.now()}-${crypto.randomUUID()}`;
 
-    const fileUrl =
-      `/uploads/registrations/${safeFileName}`;
+    const result = await new Promise<any>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          public_id: publicId,
+          resource_type: "auto",
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+
+      uploadStream.end(buffer);
+    });
 
     return NextResponse.json({
       success: true,
-      url: fileUrl,
+      url: result.secure_url,
       fileName: file.name,
       documentType: file.type,
     });
   } catch (error) {
-    console.error("File upload error:", error);
+    console.error("Cloudinary upload error:", error);
 
     return NextResponse.json(
       {
