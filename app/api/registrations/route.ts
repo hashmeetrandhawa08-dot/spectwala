@@ -1,72 +1,52 @@
-import { NextResponse } from "next/server";
-import crypto from "crypto";
-import { prisma } from "../../lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/app/lib/prisma";
+import { getAdminSession } from "@/app/lib/admin-auth";
 
-const COOKIE_NAME = "spectwala_admin_session";
-
-function verifyAdminSession(request: Request) {
+export async function GET() {
   try {
-    const cookieHeader = request.headers.get("cookie") || "";
+    const admin = await getAdminSession();
 
-    const cookies = Object.fromEntries(
-      cookieHeader.split(";").map((cookie) => {
-        const [key, ...value] = cookie.trim().split("=");
-        return [key, value.join("=")];
-      })
+    if (!admin) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    const registrations =
+      await prisma.registration.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          documents: true,
+        },
+      });
+
+    return NextResponse.json({
+      success: true,
+      registrations,
+    });
+  } catch (error) {
+    console.error(
+      "GET /api/registrations error:",
+      error
     );
 
-    const token = cookies[COOKIE_NAME];
-
-    if (!token) {
-      return false;
-    }
-
-    const secret = process.env.ADMIN_SESSION_SECRET;
-
-    if (!secret) {
-      return false;
-    }
-
-    const parts = token.split(".");
-
-    if (parts.length !== 2) {
-      return false;
-    }
-
-    const [payload, signature] = parts;
-
-    const expectedSignature = crypto
-      .createHmac("sha256", secret)
-      .update(payload)
-      .digest("base64url");
-
-    if (signature !== expectedSignature) {
-      return false;
-    }
-
-    const decoded = JSON.parse(
-      Buffer.from(payload, "base64url").toString("utf-8")
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to load registrations.",
+      },
+      { status: 500 }
     );
-
-    if (decoded.role !== "ADMIN") {
-      return false;
-    }
-
-    if (!decoded.expiresAt || Date.now() > decoded.expiresAt) {
-      return false;
-    }
-
-    return true;
-  } catch {
-    return false;
   }
 }
 
-/* =========================================================
-   PUBLIC REGISTRATION
-   ========================================================= */
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
@@ -76,132 +56,91 @@ export async function POST(request: Request) {
       email,
       phone,
       formData,
-      documents = [],
+      documents,
     } = body;
 
     if (!type) {
       return NextResponse.json(
-        { success: false, error: "Registration type is required." },
-        { status: 400 }
-      );
-    }
-
-    if (!formData) {
-      return NextResponse.json(
-        { success: false, error: "Form data is required." },
-        { status: 400 }
-      );
-    }
-
-    const registration = await prisma.registration.create({
-      data: {
-        type,
-        name: name || null,
-        email: email || null,
-        phone: phone || null,
-        formData,
-
-        documents: {
-          create: Array.isArray(documents)
-            ? documents.map(
-                (document: {
-                  documentType: string;
-                  url: string;
-                  fileName?: string;
-                }) => ({
-                  documentType: document.documentType,
-                  url: document.url,
-                  fileName: document.fileName || null,
-                })
-              )
-            : [],
+        {
+          success: false,
+          error: "Registration type is required.",
         },
-      },
+        { status: 400 }
+      );
+    }
 
-      include: {
-        documents: true,
-      },
-    });
+    const registration =
+      await prisma.registration.create({
+        data: {
+          type,
+          name: name || null,
+          email: email || null,
+          phone: phone || null,
+          formData: formData || {},
+
+          documents: {
+            create: Array.isArray(documents)
+              ? documents.map(
+                  (document: {
+                    documentType: string;
+                    url: string;
+                    fileName?: string;
+                  }) => ({
+                    documentType:
+                      document.documentType,
+                    url: document.url,
+                    fileName:
+                      document.fileName || null,
+                  })
+                )
+              : [],
+          },
+        },
+
+        include: {
+          documents: true,
+        },
+      });
 
     return NextResponse.json(
       {
         success: true,
-        message: "Registration submitted successfully.",
-        registrationId: registration.id,
+        registration,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Registration creation error:", error);
+    console.error(
+      "POST /api/registrations error:",
+      error
+    );
 
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to submit registration.",
+        error: "Failed to create registration.",
       },
       { status: 500 }
     );
   }
 }
 
-/* =========================================================
-   ADMIN — GET REGISTRATIONS
-   ========================================================= */
-
-export async function GET(request: Request) {
-  if (!verifyAdminSession(request)) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Unauthorized.",
-      },
-      { status: 401 }
-    );
-  }
-
+export async function PATCH(
+  request: NextRequest
+) {
   try {
-    const registrations = await prisma.registration.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-      include: {
-        documents: true,
-      },
-    });
+    const admin = await getAdminSession();
 
-    return NextResponse.json({
-      success: true,
-      registrations,
-    });
-  } catch (error) {
-    console.error("Registration fetch error:", error);
+    if (!admin) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
 
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Failed to fetch registrations.",
-      },
-      { status: 500 }
-    );
-  }
-}
-
-/* =========================================================
-   ADMIN — APPROVE / REJECT
-   ========================================================= */
-
-export async function PATCH(request: Request) {
-  if (!verifyAdminSession(request)) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: "Unauthorized.",
-      },
-      { status: 401 }
-    );
-  }
-
-  try {
     const body = await request.json();
 
     const {
@@ -220,11 +159,14 @@ export async function PATCH(request: Request) {
       );
     }
 
-    if (status !== "APPROVED" && status !== "REJECTED") {
+    if (
+      status !== "APPROVED" &&
+      status !== "REJECTED"
+    ) {
       return NextResponse.json(
         {
           success: false,
-          error: "Status must be APPROVED or REJECTED.",
+          error: "Invalid registration status.",
         },
         { status: 400 }
       );
@@ -232,18 +174,36 @@ export async function PATCH(request: Request) {
 
     if (
       status === "REJECTED" &&
-      (!rejectionReason || !String(rejectionReason).trim())
+      !rejectionReason?.trim()
     ) {
       return NextResponse.json(
         {
           success: false,
-          error: "Rejection reason is required.",
+          error:
+            "Please provide a rejection reason.",
         },
         { status: 400 }
       );
     }
 
-    const registration =
+    const existingRegistration =
+      await prisma.registration.findUnique({
+        where: {
+          id,
+        },
+      });
+
+    if (!existingRegistration) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Registration not found.",
+        },
+        { status: 404 }
+      );
+    }
+
+    const updatedRegistration =
       await prisma.registration.update({
         where: {
           id,
@@ -251,13 +211,17 @@ export async function PATCH(request: Request) {
 
         data: {
           status,
+          reviewedAt: new Date(),
 
           rejectionReason:
             status === "REJECTED"
-              ? String(rejectionReason).trim()
+              ? rejectionReason.trim()
               : null,
 
-          reviewedAt: new Date(),
+          reviewedBy:
+            typeof admin === "string"
+              ? admin
+              : null,
         },
 
         include: {
@@ -273,15 +237,21 @@ export async function PATCH(request: Request) {
           ? "Registration approved successfully."
           : "Registration rejected successfully.",
 
-      registration,
+      registration: updatedRegistration,
     });
   } catch (error) {
-    console.error("Registration update error:", error);
+    console.error(
+      "PATCH /api/registrations error:",
+      error
+    );
 
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to update registration.",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to update registration.",
       },
       { status: 500 }
     );

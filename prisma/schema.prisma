@@ -55,6 +55,8 @@ model User {
   store    Store?
   products Product[]
   reviews  Review[]
+  carts    Cart[]
+  orders   Order[]
 }
 
 model Store {
@@ -63,6 +65,8 @@ model Store {
   owner   User   @relation(fields: [ownerId], references: [id])
 
   storeName String
+  logoUrl   String?
+  description String?
   gstNumber String? @unique
   panNumber String?
   address   String?
@@ -79,6 +83,7 @@ model Store {
   updatedAt DateTime @updatedAt
 
   products Product[]
+  orders   Order[]
 }
 
 model Category {
@@ -115,6 +120,8 @@ model Product {
 
   images  ProductImage[]
   reviews Review[]
+  cartItems CartItem[]
+  orderItems OrderItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -201,5 +208,68 @@ model RegistrationDocument {
   url          String
   fileName     String?
 
+  createdAt DateTime @default(now())
+}
+
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model Cart {
+  id String @id @default(cuid())
+  userId String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+  id String @id @default(cuid())
+  cartId String
+  cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product Product @relation(fields: [productId], references: [id])
+  quantity Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([cartId, productId])
+}
+
+model Order {
+  id String @id @default(cuid())
+  customerId String
+  customer User @relation(fields: [customerId], references: [id])
+  storeId String
+  store Store @relation(fields: [storeId], references: [id])
+  status OrderStatus @default(PENDING)
+  totalAmount Decimal @db.Decimal(10,2)
+  paymentMethod String @default("COD")
+  shippingName String
+  phone String
+  address String
+  items OrderItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([customerId])
+  @@index([storeId])
+  @@index([status])
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+  orderId String
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product Product @relation(fields: [productId], references: [id])
+  productName String
+  unitPrice Decimal @db.Decimal(10,2)
+  quantity Int
   createdAt DateTime @default(now())
 }

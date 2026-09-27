@@ -51,6 +51,7 @@ export default function AdminLoginPage() {
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-5">
       <div className="w-full max-w-md">
 
+        {/* Header */}
         <div className="mb-8 text-center">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#3426a8] text-3xl">
             👁️
@@ -65,10 +66,12 @@ export default function AdminLoginPage() {
           </p>
         </div>
 
+        {/* Login Card */}
         <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-xl">
 
           <form onSubmit={handleLogin} className="space-y-5">
 
+            {/* Email */}
             <div>
               <label className="text-sm font-bold text-slate-700">
                 Admin Email
@@ -85,6 +88,7 @@ export default function AdminLoginPage() {
               />
             </div>
 
+            {/* Password */}
             <div>
               <label className="text-sm font-bold text-slate-700">
                 Password
@@ -101,12 +105,14 @@ export default function AdminLoginPage() {
               />
             </div>
 
+            {/* Error */}
             {error && (
               <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">
                 {error}
               </div>
             )}
 
+            {/* Login Button */}
             <button
               type="submit"
               disabled={loading}
