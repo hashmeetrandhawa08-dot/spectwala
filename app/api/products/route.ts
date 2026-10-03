@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
         // Product MUST belong to a real active store.
         seller: {
           status: "ACTIVE",
+          verification: "APPROVED",
 
           ...(storeId
             ? {

@@ -1,701 +1,379 @@
+import type { ReactNode } from "react";
+
+const ArrowRight = ({ className = "" }: { className?: string }) => (
+  <span className={className}>→</span>
+);
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#f7f6fc] text-[#11152c]">
+    <main className="min-h-screen overflow-hidden bg-[#07051b] text-white">
+      <style>{`
+        @keyframes float {
+          0%,100% {
+            transform: translateY(0) rotate(0deg)
+          }
+          50% {
+            transform: translateY(-18px) rotate(3deg)
+          }
+        }
 
-      {/* =========================================================
-          NAVBAR
-      ========================================================= */}
+        @keyframes glow {
+          0%,100% {
+            opacity: .35;
+            transform: scale(1)
+          }
+          50% {
+            opacity: .7;
+            transform: scale(1.12)
+          }
+        }
 
-      <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/95 backdrop-blur-xl">
+        @keyframes rise {
+          from {
+            opacity: 0;
+            transform: translateY(25px)
+          }
+          to {
+            opacity: 1;
+            transform: none
+          }
+        }
 
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-5 py-4">
+        .float {
+          animation: float 7s ease-in-out infinite;
+        }
 
-          {/* LOGO */}
+        .glow {
+          animation: glow 6s ease-in-out infinite;
+        }
 
-          <a
-            href="/"
-            className="mr-auto text-2xl font-black tracking-tight text-[#3426a8]"
-          >
-            SPECTWALA
+        .rise {
+          animation: rise .8s ease-out both;
+        }
+      `}</style>
+
+      <div className="fixed inset-0 -z-0 overflow-hidden">
+        <div className="glow absolute left-[8%] top-20 h-72 w-72 rounded-full bg-violet-600/30 blur-[100px]" />
+
+        <div className="glow absolute right-[5%] top-[35%] h-96 w-96 rounded-full bg-fuchsia-500/20 blur-[120px]" />
+
+        <div className="absolute inset-0 opacity-[.06] [background-image:linear-gradient(rgba(255,255,255,.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.5)_1px,transparent_1px)] [background-size:70px_70px]" />
+      </div>
+
+      {/* HEADER */}
+      <header className="relative z-20 border-b border-white/10 bg-black/20 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center gap-4 px-5 py-5">
+          <a href="/" className="mr-auto flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/15">
+              👓
+            </span>
+
+            <span className="text-xl font-black tracking-[.18em]">
+              SPECTWALA
+            </span>
           </a>
 
-          {/* NAVIGATION */}
-
-          <nav className="hidden items-center gap-7 md:flex">
-
-            <a
-              href="/"
-              className="text-sm font-black text-[#3426a8]"
-            >
-              Home
+          <nav className="hidden gap-7 text-sm font-bold text-white/65 md:flex">
+            <a href="#about" className="hover:text-white">
+              About
             </a>
 
-            <a
-              href="/shop"
-              className="text-sm font-bold text-slate-600 transition hover:text-[#3426a8]"
-            >
-              Marketplace
+            <a href="#how" className="hover:text-white">
+              How it works
             </a>
 
-            <a
-              href="/shop#stores"
-              className="text-sm font-bold text-slate-600 transition hover:text-[#3426a8]"
-            >
-              Stores
+            <a href="#business" className="hover:text-white">
+              For professionals
             </a>
-
           </nav>
 
-          {/* CUSTOMER LOGIN */}
-
           <a
-            href="/login?next=/shop"
-            className="hidden rounded-xl border-2 border-[#3426a8] px-4 py-2.5 text-sm font-black text-[#3426a8] transition hover:bg-[#3426a8] hover:text-white sm:block"
+            href="/login"
+            className="rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-black backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/15"
           >
-            Customer Login
+            Login
           </a>
 
-          {/* CART */}
-
           <a
-            href="/cart"
-            className="rounded-xl bg-[#3426a8] px-4 py-2.5 text-sm font-black text-white shadow-lg shadow-purple-200 transition hover:bg-[#241b83]"
+            href="/register"
+            className="hidden rounded-2xl bg-white px-5 py-3 text-sm font-black text-[#17113e] shadow-xl transition hover:-translate-y-0.5 sm:block"
           >
-            🛒 Cart
+            Register
           </a>
-
         </div>
-
       </header>
 
-
-      {/* =========================================================
-          HERO
-      ========================================================= */}
-
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#100d3f] via-[#3426a8] to-[#8b5cf6] text-white">
-
-        {/* Background decoration */}
-
-        <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
-
-        <div className="absolute -bottom-40 -left-32 h-96 w-96 rounded-full bg-purple-300/10 blur-3xl" />
-
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-20 md:grid-cols-2 md:py-28">
-
-          {/* HERO LEFT */}
-
-          <div>
-
-            <p className="text-xs font-black uppercase tracking-[0.35em] text-white/60">
-              PREMIUM OPTICAL MARKETPLACE
-            </p>
-
-            <h1 className="mt-5 text-5xl font-black leading-[1.05] md:text-7xl">
-              See better.
-              <br />
-              Shop smarter.
-            </h1>
-
-            <p className="mt-7 max-w-xl text-lg leading-8 text-white/70">
-              Discover eyewear, sunglasses, lenses and optical
-              products from Spectwala stores.
-            </p>
-
-
-            {/* CUSTOMER ACTIONS */}
-
-            <div className="mt-9 flex flex-wrap gap-4">
-
-              <a
-                href="/login?next=/shop"
-                className="rounded-2xl bg-white px-7 py-4 text-sm font-black text-[#3426a8] shadow-2xl transition hover:-translate-y-1"
-              >
-                👤 Customer Login with Google
-              </a>
-
-              <a
-                href="/shop"
-                className="rounded-2xl border border-white/30 bg-white/10 px-7 py-4 text-sm font-black text-white backdrop-blur transition hover:bg-white/20"
-              >
-                🛍️ Shop Marketplace
-              </a>
-
-            </div>
-
-            <p className="mt-5 text-xs font-semibold text-white/50">
-              Login to add products to your cart and place orders.
-            </p>
-
+      {/* HERO */}
+      <section className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 px-5 pb-24 pt-20 md:grid-cols-[1.05fr_.95fr] md:pt-28">
+        <div className="rise">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-white/70">
+            <span>✦</span>
+            India&apos;s optical network
           </div>
 
+          <h1 className="mt-7 text-5xl font-black leading-[.98] tracking-[-.04em] sm:text-6xl md:text-8xl">
+            A better way
+            <br />
+            <span className="bg-gradient-to-r from-white via-violet-200 to-fuchsia-300 bg-clip-text text-transparent">
+              to see.
+            </span>
+          </h1>
 
-          {/* HERO RIGHT */}
+          <p className="mt-7 max-w-2xl text-lg leading-8 text-white/60">
+            Spectwala connects customers, optical stores, wholesale businesses
+            and eye-care organisations in one beautifully designed network.
+          </p>
 
-          <div className="relative">
+          <div className="mt-9 flex flex-wrap gap-3">
+            <a
+              href="/login"
+              className="rounded-2xl bg-white px-6 py-4 font-black text-[#17113e] shadow-2xl transition hover:-translate-y-1"
+            >
+              Enter Spectwala →
+            </a>
 
-            <div className="relative mx-auto max-w-md rounded-[40px] border border-white/20 bg-white/10 p-5 shadow-2xl backdrop-blur-xl">
-
-              <div className="rounded-[30px] bg-white p-6 text-[#11152c]">
-
-                {/* STORE HEADER */}
-
-                <div className="flex items-center justify-between">
-
-                  <div>
-
-                    <p className="text-xs font-black uppercase tracking-widest text-[#3426a8]">
-                      SPECTWALA
-                    </p>
-
-                    <p className="mt-1 text-sm font-bold text-slate-500">
-                      Optical marketplace
-                    </p>
-
-                  </div>
-
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#f0efff] text-3xl">
-                    👓
-                  </div>
-
-                </div>
-
-
-                {/* PRODUCT VISUAL */}
-
-                <div className="mt-8 flex aspect-square items-center justify-center rounded-3xl bg-gradient-to-br from-[#f1efff] to-[#e5e0ff]">
-
-                  <div className="text-[130px] drop-shadow-xl">
-                    👓
-                  </div>
-
-                </div>
-
-
-                {/* PRODUCT INFO */}
-
-                <div className="mt-6">
-
-                  <p className="text-xs font-bold text-[#3426a8]">
-                    VERIFIED STORE
-                  </p>
-
-                  <h3 className="mt-1 text-2xl font-black">
-                    Premium Eyewear
-                  </h3>
-
-                  <div className="mt-4 flex items-center justify-between">
-
-                    <p className="text-xl font-black">
-                      Explore collection
-                    </p>
-
-                    <span className="rounded-xl bg-[#3426a8] px-4 py-2 text-sm font-black text-white">
-                      →
-                    </span>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
+            <a
+              href="/register"
+              className="rounded-2xl border border-white/20 bg-white/5 px-6 py-4 font-black text-white backdrop-blur transition hover:-translate-y-1 hover:bg-white/10"
+            >
+              Join the network
+            </a>
           </div>
 
+          <div className="mt-8 flex flex-wrap gap-6 text-sm text-white/45">
+            <span>✓ Verified professionals</span>
+            <span>⌂ Real stores</span>
+            <span>◉ Eye-care community</span>
+          </div>
         </div>
 
-      </section>
-
-
-      {/* =========================================================
-          CUSTOMER LOGIN SECTION
-      ========================================================= */}
-
-      <section className="mx-auto max-w-7xl px-5 py-16">
-
-        <div className="overflow-hidden rounded-[32px] bg-white shadow-xl">
-
-          <div className="grid md:grid-cols-2">
-
-            {/* LEFT */}
-
-            <div className="bg-[#f0efff] p-8 md:p-12">
-
-              <p className="text-xs font-black uppercase tracking-[0.25em] text-[#3426a8]">
-                FOR CUSTOMERS
-              </p>
-
-              <h2 className="mt-4 text-4xl font-black leading-tight">
-                Your optical shopping
-                <br />
-                starts here.
-              </h2>
-
-              <p className="mt-5 max-w-lg leading-7 text-slate-600">
-                Login with your Google account and discover
-                products uploaded directly by Spectwala sellers.
-              </p>
-
-
-              {/* SEARCH */}
-
-              <div className="mt-8 flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm">
-
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#3426a8] text-white">
-                  🔍
-                </div>
-
+        {/* HERO VISUAL */}
+        <div className="relative min-h-[480px]">
+          <div className="float absolute right-0 top-8 w-[88%] rounded-[38px] border border-white/15 bg-white/10 p-3 shadow-2xl backdrop-blur-xl">
+            <div className="rounded-[30px] bg-gradient-to-br from-white to-violet-50 p-6 text-[#17113e]">
+              <div className="flex items-center justify-between">
                 <div>
-
-                  <p className="font-black">
-                    Search products
+                  <p className="text-xs font-black tracking-[.2em] text-violet-600">
+                    SPECTWALA
                   </p>
 
-                  <p className="text-sm text-slate-500">
-                    Find eyewear from real stores.
+                  <p className="mt-1 text-xl font-black">
+                    Your optical world
                   </p>
-
                 </div>
 
+                <div className="grid h-11 w-11 place-items-center rounded-2xl bg-violet-100">
+                  👓
+                </div>
               </div>
 
-
-              {/* CART */}
-
-              <div className="mt-4 flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm">
-
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#3426a8] text-white">
-                  🛒
-                </div>
-
-                <div>
-
-                  <p className="font-black">
-                    Add to cart
-                  </p>
-
-                  <p className="text-sm text-slate-500">
-                    Save products and checkout easily.
-                  </p>
-
-                </div>
-
-              </div>
-
-
-              {/* ORDERS */}
-
-              <div className="mt-4 flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm">
-
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#3426a8] text-white">
-                  📦
-                </div>
-
-                <div>
-
-                  <p className="font-black">
-                    Track orders
-                  </p>
-
-                  <p className="text-sm text-slate-500">
-                    See your orders in one place.
-                  </p>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            {/* RIGHT LOGIN */}
-
-            <div className="flex items-center justify-center p-8 md:p-12">
-
-              <div className="w-full max-w-md text-center">
-
-                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-[#3426a8] text-4xl shadow-xl">
-                  👤
-                </div>
-
-                <h2 className="mt-6 text-3xl font-black">
-                  Customer Login
-                </h2>
-
-                <p className="mt-3 leading-7 text-slate-500">
-                  Sign in with Google to shop from
-                  Spectwala stores.
+              <div className="mt-6 rounded-3xl bg-gradient-to-br from-[#1b1552] to-[#7957e9] p-6 text-white">
+                <p className="text-xs font-bold text-white/60">
+                  DISCOVER
                 </p>
 
+                <p className="mt-2 text-3xl font-black">
+                  Stores. Products.
+                  <br />
+                  Eye care.
+                </p>
 
-                {/* GOOGLE */}
-
-                <a
-                  href="/login?next=/shop"
-                  className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-6 py-4 text-sm font-black shadow-md transition hover:-translate-y-1 hover:shadow-xl"
-                >
-
-                  <span className="text-xl font-black">
-                    G
+                <div className="mt-5 flex gap-2">
+                  <span className="rounded-full bg-white/15 px-3 py-1 text-xs">
+                    Verified stores
                   </span>
 
-                  Continue with Google
-
-                </a>
-
-
-                {/* MARKETPLACE */}
-
-                <a
-                  href="/shop"
-                  className="mt-4 block w-full rounded-2xl bg-[#3426a8] px-6 py-4 text-sm font-black text-white shadow-lg transition hover:bg-[#241b83]"
-                >
-                  Browse Marketplace
-                </a>
-
-                <p className="mt-5 text-xs leading-5 text-slate-400">
-                  Browse the marketplace without logging in.
-                  Login is required when you want to add
-                  products to your cart or place an order.
-                </p>
-
+                  <span className="rounded-full bg-white/15 px-3 py-1 text-xs">
+                    Eye camps
+                  </span>
+                </div>
               </div>
 
+              <div className="mt-5 grid grid-cols-3 gap-3">
+                {["◯", "◯", "◯"].map((x, i) => (
+                  <div
+                    key={i}
+                    className="h-24 rounded-2xl bg-violet-100/80"
+                  />
+                ))}
+              </div>
             </div>
-
           </div>
 
+          <div
+            className="float absolute bottom-3 left-0 grid h-32 w-32 place-items-center rounded-[32px] border border-white/15 bg-white/10 text-6xl shadow-xl backdrop-blur-xl"
+            style={{ animationDelay: "-2s" }}
+          >
+            👓
+          </div>
         </div>
-
       </section>
 
-
-      {/* =========================================================
-          MARKETPLACE
-      ========================================================= */}
-
-      <section className="mx-auto max-w-7xl px-5 pb-20">
-
-        <div className="text-center">
-
-          <p className="text-xs font-black uppercase tracking-[0.25em] text-[#3426a8]">
-            SPECTWALA MARKETPLACE
+      {/* ABOUT */}
+      <section
+        id="about"
+        className="relative z-10 border-y border-white/10 bg-white/[.03] px-5 py-20"
+      >
+        <div className="mx-auto max-w-7xl">
+          <p className="text-xs font-black uppercase tracking-[.25em] text-violet-300">
+            One network
           </p>
 
-          <h2 className="mt-3 text-4xl font-black">
-            Everything in one place
+          <h2 className="mt-3 text-4xl font-black md:text-5xl">
+            Built for the whole optical ecosystem.
           </h2>
 
-          <p className="mx-auto mt-4 max-w-2xl leading-7 text-slate-500">
-            Browse products from actual Spectwala sellers,
-            visit their stores and purchase directly through
-            the marketplace.
-          </p>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            <Card
+              icon={<span>👤</span>}
+              title="Customers"
+              text="Discover verified optical stores, products and community eye camps."
+            />
 
+            <Card
+              icon={<span>🏪</span>}
+              title="Businesses"
+              text="Create a premium digital presence and manage your optical business."
+            />
+
+            <Card
+              icon={<span>📦</span>}
+              title="Wholesale"
+              text="Run a separate B2B catalogue and receive wholesale orders privately."
+            />
+          </div>
         </div>
-
-
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
-
-          {/* STORES */}
-
-          <a
-            href="/shop#stores"
-            className="group rounded-[28px] bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
-          >
-
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f0efff] text-3xl">
-              🏪
-            </div>
-
-            <h3 className="mt-6 text-2xl font-black">
-              Real optical stores
-            </h3>
-
-            <p className="mt-3 leading-7 text-slate-500">
-              Explore stores created by approved Spectwala
-              professionals.
-            </p>
-
-            <span className="mt-5 inline-block font-black text-[#3426a8]">
-              Explore stores →
-            </span>
-
-          </a>
-
-
-          {/* PRODUCTS */}
-
-          <a
-            href="/shop"
-            className="group rounded-[28px] bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
-          >
-
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f0efff] text-3xl">
-              👓
-            </div>
-
-            <h3 className="mt-6 text-2xl font-black">
-              Optical products
-            </h3>
-
-            <p className="mt-3 leading-7 text-slate-500">
-              Discover products actually uploaded by
-              Spectwala sellers.
-            </p>
-
-            <span className="mt-5 inline-block font-black text-[#3426a8]">
-              Shop products →
-            </span>
-
-          </a>
-
-
-          {/* ORDERS */}
-
-          <a
-            href="/orders"
-            className="group rounded-[28px] bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
-          >
-
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f0efff] text-3xl">
-              📦
-            </div>
-
-            <h3 className="mt-6 text-2xl font-black">
-              Track your orders
-            </h3>
-
-            <p className="mt-3 leading-7 text-slate-500">
-              Keep your purchases organized and check
-              order status from one place.
-            </p>
-
-            <span className="mt-5 inline-block font-black text-[#3426a8]">
-              My orders →
-            </span>
-
-          </a>
-
-        </div>
-
       </section>
 
-
-      {/* =========================================================
-          HOW IT WORKS
-      ========================================================= */}
-
-      <section className="border-y border-slate-200 bg-white">
-
-        <div className="mx-auto max-w-7xl px-5 py-20">
-
-          <div className="text-center">
-
-            <p className="text-xs font-black uppercase tracking-[0.25em] text-[#3426a8]">
-              HOW IT WORKS
+      {/* HOW IT WORKS */}
+      <section
+        id="how"
+        className="relative z-10 mx-auto max-w-7xl px-5 py-20"
+      >
+        <div className="grid gap-12 md:grid-cols-2">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[.25em] text-violet-300">
+              How it works
             </p>
 
-            <h2 className="mt-3 text-4xl font-black">
-              Simple optical shopping
+            <h2 className="mt-3 text-4xl font-black md:text-5xl">
+              Simple on the outside.
+              <br />
+              Powerful underneath.
+            </h2>
+          </div>
+
+          <div className="space-y-5">
+            <Step
+              n="01"
+              title="Choose your path"
+              text="Customer, optical store, wholesale business or eye-camp organisation."
+            />
+
+            <Step
+              n="02"
+              title="Get verified when required"
+              text="Professional and organisation accounts go through Spectwala approval."
+            />
+
+            <Step
+              n="03"
+              title="Get your own experience"
+              text="Every approved role receives a focused dashboard built for its work."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* PROFESSIONALS */}
+      <section
+        id="business"
+        className="relative z-10 mx-auto max-w-7xl px-5 pb-24"
+      >
+        <div className="overflow-hidden rounded-[36px] border border-white/10 bg-gradient-to-br from-violet-700/60 to-fuchsia-600/30 p-8 md:p-12">
+          <div className="max-w-3xl">
+            <p className="text-xs font-black uppercase tracking-[.25em] text-white/60">
+              For professionals
+            </p>
+
+            <h2 className="mt-3 text-4xl font-black md:text-5xl">
+              Put your optical business where customers can find it.
             </h2>
 
-          </div>
-
-
-          <div className="mt-10 grid gap-5 md:grid-cols-4">
-
-            <Step
-              number="01"
-              icon="👤"
-              title="Login"
-              text="Sign in securely using your Google account."
-            />
-
-            <Step
-              number="02"
-              icon="🔍"
-              title="Discover"
-              text="Search products from Spectwala stores."
-            />
-
-            <Step
-              number="03"
-              icon="🛒"
-              title="Add to cart"
-              text="Choose products and continue to checkout."
-            />
-
-            <Step
-              number="04"
-              icon="📦"
-              title="Order"
-              text="Place your order and track it from My Orders."
-            />
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =========================================================
-          PROFESSIONAL / SELLER SECTION
-      ========================================================= */}
-
-      <section className="bg-[#f7f6fc]">
-
-        <div className="mx-auto max-w-7xl px-5 py-20">
-
-          <div className="overflow-hidden rounded-[32px] bg-gradient-to-br from-[#100d3f] via-[#3426a8] to-[#8b5cf6] p-8 text-white shadow-2xl md:p-12">
-
-            <div className="flex flex-col justify-between gap-10 md:flex-row md:items-center">
-
-              <div>
-
-                <p className="text-xs font-black uppercase tracking-[0.3em] text-white/50">
-                  FOR OPTICAL PROFESSIONALS
-                </p>
-
-                <h2 className="mt-4 text-4xl font-black">
-                  Build your Spectwala store.
-                </h2>
-
-                <p className="mt-4 max-w-xl leading-7 text-white/70">
-                  Approved professionals can create their own
-                  store, upload products and receive customer
-                  orders through Spectwala.
-                </p>
-
-              </div>
-
-
-              <a
-                href="/register"
-                className="shrink-0 rounded-2xl bg-white px-7 py-4 text-center text-sm font-black text-[#3426a8] shadow-xl transition hover:-translate-y-1"
-              >
-                Register as Professional →
-              </a>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =========================================================
-          FOOTER
-      ========================================================= */}
-
-      <footer className="bg-[#100d3f] text-white">
-
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 px-5 py-12 md:flex-row md:items-center">
-
-          <div>
-
-            <p className="text-2xl font-black">
-              SPECTWALA
+            <p className="mt-5 text-white/65">
+              Register your organisation, get approved, create your profile
+              and start building your presence on Spectwala.
             </p>
 
-            <p className="mt-2 text-sm text-white/50">
-              Premium optical marketplace.
-            </p>
-
+            <a
+              href="/register"
+              className="mt-8 inline-flex rounded-2xl bg-white px-6 py-4 font-black text-[#20154d]"
+            >
+              Register now
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </a>
           </div>
-
-
-          <div className="flex flex-wrap gap-5 text-sm font-bold text-white/60">
-
-            <a
-              href="/"
-              className="transition hover:text-white"
-            >
-              Home
-            </a>
-
-            <a
-              href="/shop"
-              className="transition hover:text-white"
-            >
-              Marketplace
-            </a>
-
-            <a
-              href="/login?next=/shop"
-              className="transition hover:text-white"
-            >
-              Customer Login
-            </a>
-
-            <a
-              href="/cart"
-              className="transition hover:text-white"
-            >
-              Cart
-            </a>
-
-            <a
-              href="/orders"
-              className="transition hover:text-white"
-            >
-              Orders
-            </a>
-
-          </div>
-
         </div>
+      </section>
 
+      {/* FOOTER */}
+      <footer className="relative z-10 border-t border-white/10 px-5 py-8 text-center text-sm text-white/35">
+        © {new Date().getFullYear()} Spectwala · Optical marketplace &
+        eye-care network
       </footer>
-
     </main>
   );
 }
 
-
-/* =========================================================
-   STEP COMPONENT
-========================================================= */
-
-function Step({
-  number,
+function Card({
   icon,
   title,
   text,
 }: {
-  number: string;
-  icon: string;
+  icon: ReactNode;
   title: string;
   text: string;
 }) {
   return (
-    <div className="rounded-3xl border border-slate-200 bg-[#f7f6fc] p-6 shadow-sm">
-
-      <div className="flex items-center justify-between">
-
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eeeaff] text-2xl">
-          {icon}
-        </div>
-
-        <span className="text-xs font-black text-slate-300">
-          {number}
-        </span>
-
+    <div className="rounded-3xl border border-white/10 bg-white/[.04] p-7 transition hover:-translate-y-1 hover:bg-white/[.07]">
+      <div className="grid h-12 w-12 place-items-center rounded-2xl bg-violet-500/15 text-violet-200">
+        {icon}
       </div>
 
       <h3 className="mt-5 text-xl font-black">
         {title}
       </h3>
 
-      <p className="mt-2 text-sm leading-6 text-slate-500">
+      <p className="mt-3 leading-7 text-white/50">
         {text}
       </p>
+    </div>
+  );
+}
 
+function Step({
+  n,
+  title,
+  text,
+}: {
+  n: string;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="flex gap-5 rounded-3xl border border-white/10 bg-white/[.035] p-6">
+      <span className="text-sm font-black text-violet-300">
+        {n}
+      </span>
+
+      <div>
+        <h3 className="font-black">
+          {title}
+        </h3>
+
+        <p className="mt-2 text-sm leading-6 text-white/50">
+          {text}
+        </p>
+      </div>
     </div>
   );
 }

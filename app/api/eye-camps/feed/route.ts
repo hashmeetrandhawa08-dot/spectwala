@@ -1,0 +1,1 @@
+import {NextResponse} from "next/server";import {prisma} from "@/app/lib/prisma";export async function GET(){const posts=await prisma.eyeCampPost.findMany({where:{eyeCamp:{status:"ACTIVE",verification:"APPROVED"}},include:{eyeCamp:{select:{id:true,name:true,logoUrl:true,city:true}}},orderBy:{createdAt:"desc"},take:30});return NextResponse.json({posts})}
