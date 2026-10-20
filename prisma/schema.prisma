@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client"
   output   = "../app/generated/prisma"
@@ -11,8 +12,8 @@ enum UserRole {
   CUSTOMER
   SELLER
   MANUFACTURER
-  CONSULTANT
   ADMIN
+  CONSULTANT
   WHOLESALER
   EYE_CAMP
 }
@@ -75,6 +76,7 @@ model User {
   phone     String?
   role      UserRole
   status    AccountStatus @default(PENDING)
+  upiId     String?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
@@ -163,16 +165,16 @@ model EyeCamp {
 }
 
 model EyeCampPost {
-  id        String   @id @default(cuid())
-  eyeCampId String
-  eyeCamp   EyeCamp  @relation(fields: [eyeCampId], references: [id], onDelete: Cascade)
-  title     String
+  id          String   @id @default(cuid())
+  eyeCampId   String
+  eyeCamp     EyeCamp  @relation(fields: [eyeCampId], references: [id], onDelete: Cascade)
+  title       String
   description String?
-  imageUrl  String?
-  eventDate DateTime?
-  timeText  String?
-  venue     String?
-  contact   String?
+  imageUrl    String?
+  eventDate   DateTime?
+  timeText    String?
+  venue       String?
+  contact     String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -192,16 +194,16 @@ model Category {
 }
 
 model Product {
-  id            String            @id @default(cuid())
-  name          String
-  sku           String?
-  brand         String?
-  description   String?
-  price         Decimal           @db.Decimal(10, 2)
-  wholesalePrice Decimal?         @db.Decimal(10, 2)
-  stock         Int               @default(0)
-  status        ProductStatus     @default(DRAFT)
-  visibility    ProductVisibility  @default(CUSTOMER)
+  id             String             @id @default(cuid())
+  name           String
+  sku            String?
+  brand          String?
+  description    String?
+  price          Decimal            @db.Decimal(10, 2)
+  wholesalePrice Decimal?
+  stock          Int                @default(0)
+  status         ProductStatus      @default(DRAFT)
+  visibility     ProductVisibility  @default(CUSTOMER)
 
   sellerId String?
   seller   Store? @relation(fields: [sellerId], references: [id])
@@ -215,11 +217,11 @@ model Product {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
-  images               ProductImage[]
-  reviews              Review[]
-  cartItems            CartItem[]
-  orderItems           OrderItem[]
-  wholesaleOrderItems  WholesaleOrderItem[]
+  images              ProductImage[]
+  reviews             Review[]
+  cartItems           CartItem[]
+  orderItems          OrderItem[]
+  wholesaleOrderItems WholesaleOrderItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -257,7 +259,7 @@ model Review {
 model Registration {
   id              String             @id @default(cuid())
   type            RegistrationType
-  status          RegistrationStatus @default(PENDING)
+  status          RegistrationStatus  @default(PENDING)
   name            String?
   email           String?
   phone           String?
@@ -321,6 +323,15 @@ model Order {
   totalAmount   Decimal     @db.Decimal(10, 2)
   paymentMethod String      @default("COD")
 
+  // Customer payment verification; keep separate from payout status.
+  paymentReference String?
+  paymentProofData String?  @db.Text
+  paymentStatus    String   @default("NOT_REQUIRED")
+
+  // Admin-to-seller payout tracking.
+  payoutStatus String   @default("PENDING")
+  payoutPaidAt DateTime?
+
   shippingName String
   phone        String
   address      String
@@ -333,6 +344,8 @@ model Order {
   @@index([customerId])
   @@index([storeId])
   @@index([status])
+  @@index([paymentStatus])
+  @@index([payoutStatus])
 }
 
 model OrderItem {
@@ -357,6 +370,10 @@ model WholesaleOrder {
   status           OrderStatus    @default(PENDING)
   totalAmount      Decimal        @db.Decimal(10, 2)
 
+  // Admin-to-manufacturer/wholeseller payout tracking.
+  payoutStatus String   @default("PENDING")
+  payoutPaidAt DateTime?
+
   buyerName    String
   buyerPhone   String
   buyerAddress String
@@ -368,6 +385,7 @@ model WholesaleOrder {
 
   @@index([wholesalerId])
   @@index([wholesaleStoreId])
+  @@index([payoutStatus])
 }
 
 model WholesaleOrderItem {
